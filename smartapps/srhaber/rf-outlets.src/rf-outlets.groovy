@@ -11,6 +11,8 @@ definition(
 
 preferences {
 	section("RF Outlets Setup") {
+    	input "ip_address", "text", title: "IP Address"
+        input "port", "number", title: "Port"
 		// Put something here
 	}
 	//page(name:"sonosDiscovery", title:"Sonos Device Setup", content:"sonosDiscovery", refreshTimeout:5)
