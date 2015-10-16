@@ -10,12 +10,55 @@ definition(
 )
 
 preferences {
-	section("RF Outlets Setup") {
+	section("LAN Settings") {
     	input "ip_address", "text", title: "IP Address"
         input "port", "number", title: "Port"
-		// Put something here
+    }
+    section("Switches") {
+        input "switch1", "text", title: "Switch 1", default: "switch1", required: false
+        input "switch2", "text", title: "Switch 2", default: "switch2", required: false
+        input "switch3", "text", title: "Switch 3", default: "switch3", required: false
+        input "switch4", "text", title: "Switch 4", default: "switch4", required: false
+        input "switch5", "text", title: "Switch 5", default: "switch5", required: false
 	}
 	//page(name:"sonosDiscovery", title:"Sonos Device Setup", content:"sonosDiscovery", refreshTimeout:5)
+}
+
+def installed() {
+	//log.trace "Installed with settings: ${settings}"
+ 	initialize()
+}
+
+def updated() {
+ 	//log.trace "Updated with settings: ${settings}"
+// 	unschedule()
+ 	initialize()
+}
+
+def uninstalled() {
+	def devices = getChildDevices()
+ 	log.trace "deleting child devices"
+// 	devices.each {
+// 		deleteChildDevice(it.deviceNetworkId)
+// 	}
+}
+
+def initialize() {
+ 	// remove location subscription aftwards
+ 	unsubscribe()
+ 	state.subscribe = false
+
+    log.trace("Initializing")
+    addChildDevice("srhaber", "RF Outlet", "rfoutlet2");
+
+// 	unschedule()
+// 	scheduleActions()
+
+//	if (selectedSonos) {
+// 		addSonos()
+// 	}
+
+// 	scheduledActionsHandler()
 }
 
 // //PAGES
@@ -117,38 +160,7 @@ preferences {
 // 	getSonosPlayer().findAll{ it?.value?.verified == true }
 // }
 //
-// def installed() {
-// 	log.trace "Installed with settings: ${settings}"
-// 	initialize()}
-//
-// def updated() {
-// 	log.trace "Updated with settings: ${settings}"
-// 	unschedule()
-// 	initialize()
-// }
-//
-// def uninstalled() {
-// 	def devices = getChildDevices()
-// 	log.trace "deleting ${devices.size()} Sonos"
-// 	devices.each {
-// 		deleteChildDevice(it.deviceNetworkId)
-// 	}
-// }
-//
-// def initialize() {
-// 	// remove location subscription aftwards
-// 	unsubscribe()
-// 	state.subscribe = false
-//
-// 	unschedule()
-// 	scheduleActions()
-//
-// 	if (selectedSonos) {
-// 		addSonos()
-// 	}
-//
-// 	scheduledActionsHandler()
-// }
+
 //
 // def scheduledActionsHandler() {
 // 	log.trace "scheduledActionsHandler()"
