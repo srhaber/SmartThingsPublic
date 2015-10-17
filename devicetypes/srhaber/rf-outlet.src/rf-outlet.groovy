@@ -1,24 +1,7 @@
-/**
- *  Copyright 2015 SmartThings
- *
- *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License. You may obtain a copy of the License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
- *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
- *  for the specific language governing permissions and limitations under the License.
- *
- */
-metadata {
-	
+metadata {	
     definition (name: "RF Outlet", namespace: "srhaber", author: "Shaun Haber") {
 		capability "Switch"
-        capability "Relay Switch"
-
-		command "onPhysical"
-		command "offPhysical"
+        capability "Relay Switch"        
 	}
 
 	tiles {
@@ -27,14 +10,18 @@ metadata {
 			state "on", label: '${currentValue}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821"
 		}
 		standardTile("on", "device.switch", decoration: "flat") {
-			state "default", label: 'On', action: "onPhysical", backgroundColor: "#ffffff"
-		}
+			state "default", label: 'On', action: "on", backgroundColor: "#ffffff"
+		}   
 		standardTile("off", "device.switch", decoration: "flat") {
-			state "default", label: 'Off', action: "offPhysical", backgroundColor: "#ffffff"
+			state "default", label: 'Off', action: "off", backgroundColor: "#ffffff"
 		}
         main "switch"
 		details(["switch","on","off"])
 	}
+    
+    preferences {
+        input(name: "channel", title: "Channel", description: "Enter a valid channel, from 1 to 5.", type: "number", range: "1..5", required: true)    
+    }
 }
 
 def parse(String description) {
@@ -43,11 +30,11 @@ def parse(String description) {
 }
 
 def on() {
-	log.debug "$version on()"
+	log.debug "$channel on()"
 	sendEvent(name: "switch", value: "on")
     def result = new physicalgraph.device.HubAction(
-        method: "GET",
-        path: "/2/1",
+        method: "PUT",
+        path: "/$channel/1",
         headers: [
             HOST: '10.0.1.101:8080'
         ]
@@ -56,26 +43,16 @@ def on() {
 }
 
 def off() {
-	log.debug "$version off()"
+	log.debug "$channel off()"
 	sendEvent(name: "switch", value: "off")
     def result = new physicalgraph.device.HubAction(
-        method: "GET",
-        path: "/2/0",
+        method: "PUT",
+        path: "/$channel/0",
         headers: [
             HOST: '10.0.1.101:8080'
         ]
     )
     return result    
-}
-
-def onPhysical() {
-	log.debug "$version onPhysical()"
-	sendEvent(name: "switch", value: "on", type: "physical")
-}
-
-def offPhysical() {
-	log.debug "$version offPhysical()"
-	sendEvent(name: "switch", value: "off", type: "physical")
 }
 
 private getVersion() {
